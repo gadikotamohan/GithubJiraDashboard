@@ -1,8 +1,8 @@
 require 'pry'
 
 JIRA_AUTH = {
-  user: 'mohan@gmohan.com',
-  password: 'zkqNsogAN0JxbCPU3e6MF1D5'
+  user: '',
+  password: ''
 }
 
 
