@@ -1,8 +1,10 @@
+require 'dotenv'
+Dotenv.load('.env')
+
 require 'dashing'
 require 'pry'
-require 'dotenv'
+require_relative 'lib/pramati'
 
-Dotenv.load
 configure do
   set :auth_token, 'YOUR_AUTH_TOKEN'
 

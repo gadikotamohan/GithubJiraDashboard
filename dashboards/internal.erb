@@ -1,20 +1,38 @@
 <% content_for :title do %>Dashboard<% end %>
+<% config = Pramati::CONFIG[:internal] %>
+<% jira_config = config[:jira] %>
+<% github_config = config[:github] %>
+<% releases_config = config[:deployment] %>
+<% jira = Pramati::Jira.new(ENV["JIRA_USER"], ENV["JIRA_PASSWORD"], config[:jira][:board_id])%>
 <div class="gridster">
   <ul>
-    <li data-row="1" data-col="1" data-sizex="1" data-sizey="1">
-      <div data-id="jira_internal" data-view="List" data-unordered="true" data-title="Jira Info" data-moreinfo="# automatically updates this section in every 20 minutes"></div>
-    </li>
-    <li data-row="1" data-col="1" data-sizex="3" data-sizey="2">
-      <div data-id="github_internal" data-view="List" data-unordered="false" data-title="Github Info" data-moreinfo="# automatically updates this section in every 60 minutes" style="background-color: #32711b" ></div>
-    </li>
-    <li data-row="1" data-col="1" data-sizex="3" data-sizey="2">
-      <div data-id="releases_internal" data-view="List" data-unordered="true" data-title="Deployment Info" data-moreinfo="# automatically updates this section in every 60 minutes" style="background-color: #a7961d"></div>
-    </li>
+    <% jira.current_sprints.each do |sprint| %>
+      <li data-row="<%= jira_config[:position][:row] %>" data-col="<%= jira_config[:position][:col] %>" data-sizex="<%= jira_config[:position][:sizex] %>" data-sizey="<%= jira_config[:position][:sizey] %>">
+        <div data-id="<%= sprint.id %>" data-view="List" data-unordered="true" data-title="Jira Info" data-moreinfo="# automatically updates this section in every 20 minutes"></div>
+      </li>
+    <% end %>
+    <% github_config[:repos].each do |repo| %>
+      <li data-row="<%= github_config[:position][:row] %>" data-col="<%= github_config[:position][:col] %>" data-sizex="<%= github_config[:position][:sizex] %>" data-sizey="<%= github_config[:position][:sizey] %>">
+        <div data-id="<%= "#{repo}_github" %>" data-view="List" data-unordered="false" data-title="Github Info" data-moreinfo="# automatically updates this section in every 60 minutes" style="background-color: #32711b"></div>
+      </li>
+    <% end %>
+    <% releases_config[:repos].each do |repo| %>
+      <li data-row="<%= releases_config[:position][:row] %>" data-col="<%= releases_config[:position][:col] %>" data-sizex="<%= releases_config[:position][:sizex] %>" data-sizey="<%= releases_config[:position][:sizey] %>">
+        <div data-id="<%= "#{repo}_releases" %>" data-view="List" data-unordered="true" data-title="Releases Info" data-moreinfo="# automatically updates this section in every 60 minutes" style="background-color: #a7961d"></div>
+      </li>
+    <% end %>
     <li data-row="1" data-col="1" data-sizex="1" data-sizey="1">
       <div data-id="buzzwords" data-view="List" data-unordered="true" data-title="OPS Info" data-moreinfo="# automatically updates this section in every 20 minutes"></div>
     </li>
     <li data-row="1" data-col="1" data-sizex="1" data-sizey="1">
       <div data-id="buzzwords" data-view="List" data-unordered="true" data-title="Data Changes" data-moreinfo="# automatically updates this section in every 20 minutes"></div>
     </li>
+
   </ul>
 </div>
+<script type='text/javascript'>
+$(function() {
+  Dashing.widget_base_dimensions = [370, 340]
+  Dashing.numColumns = 5
+});
+</script>

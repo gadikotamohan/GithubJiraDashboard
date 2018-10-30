@@ -2,26 +2,31 @@ require 'httparty'
 module Pramati
   class Jira
     include HTTParty
-    attr_accessor :user, :password, :current_sprint, :boardId
-    base_uri 'https://gmohan.atlassian.net'
-    debug_output $stdout # <= will spit out all request details to the console
-    def initialize(user, password, boardId)
+    attr_accessor :user, :password, :current_sprints, :board_id
+    base_uri 'http://jira'
+    # debug_output $stdout
+    def initialize(user, password, board_id)
       self.user = user
       self.password = password
-      self.boardId = boardId
-      self.current_sprint = get_active_sprint
+      self.board_id = board_id
+      self.current_sprints = get_active_sprints
     end
 
-    def get_active_sprint 
+    def get_active_sprints 
       this = self
-      response = this.class.get('/rest/agile/1.0/board/2/sprint', query: { state: 'active'} , basic_auth: { username: this.user, password: this.password }, headers: {'Accept' =>  'application/json' } )
-      JSON.parse(response.to_s, object_class: OpenStruct).values[0]
+      response = this.class.get("/rest/agile/1.0/board/#{self.board_id}/sprint", query: { state: 'active'} , basic_auth: { username: this.user, password: this.password }, headers: {'Accept' =>  'application/json' } )
+      JSON.parse(response.to_s, object_class: OpenStruct).values
     end
 
     def issues
       this = self
-      response = this.class.get("/rest/agile/1.0/sprint/#{current_sprint.id}/issue", query: { maxResults: 200 }, basic_auth: { username: this.user, password: this.password }, headers: {'Accept' =>  'application/json' })
-      JSON.parse(response.to_s, object_class: OpenStruct).issues
+      this.current_sprints.inject({}){ |r, v|
+        r[v.id] ||= []
+        r[v.id].flatten!
+        response = this.class.get("/rest/agile/1.0/sprint/#{v.id}/issue", query: { maxResults: 200 }, basic_auth: { username: this.user, password: this.password }, headers: {'Accept' =>  'application/json' })
+        r[v.id] << JSON.parse(response.to_s, object_class: OpenStruct).issues
+        r
+      }
     end
   end
 end

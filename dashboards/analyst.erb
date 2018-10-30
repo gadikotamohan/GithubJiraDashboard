@@ -1,7 +1,6 @@
-<% content_for :title do %>Dashboard<% end %>
 <div class="gridster">
   <ul>
-    <li data-row="1" data-col="1" data-sizex="1" data-sizey="1">
+    <li data-row="1" data-col="1" data-sizex="2" data-sizey="2">
       <div data-id="jira_analyst" data-view="List" data-unordered="true" data-title="Jira Info" data-moreinfo="# automatically updates this section in every 20 minutes"></div>
     </li>
     <li data-row="1" data-col="1" data-sizex="3" data-sizey="2">
@@ -18,3 +17,9 @@
     </li>
   </ul>
 </div>
+<script type='text/javascript'>
+$(function() {
+  Dashing.widget_base_dimensions = [370, 340]
+  Dashing.numColumns = 5
+});
+</script>

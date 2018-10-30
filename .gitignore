@@ -4,3 +4,4 @@ history.yml
 # Ignore application configuration
 /config/application.yml
 /jobs/*.original
+.env
